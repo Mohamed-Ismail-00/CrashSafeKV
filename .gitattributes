@@ -1,0 +1,4 @@
+# Normalise line endings in the repository; keep images and binaries untouched.
+* text=auto
+*.png binary
+*.exe binary
