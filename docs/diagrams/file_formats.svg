@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" font-family="Segoe UI, Arial, sans-serif">
+  <style>
+    .f   { fill: #f4f6f9; stroke: #5b6574; stroke-width: 1.3; }
+    .h   { fill: #e8f0fd; stroke: #3b6fd8; stroke-width: 1.3; }
+    .c   { fill: #fdf1ec; stroke: #c4573a; stroke-width: 1.3; }
+    .v   { fill: #ffffff; stroke: #5b6574; stroke-width: 1.3; stroke-dasharray: 5 3; }
+    .t   { font-size: 14px; font-weight: 600; fill: #1d2330; }
+    .n   { font-size: 13px; font-weight: 600; fill: #1d2330; }
+    .s   { font-size: 12px; fill: #4a5363; }
+    .cap { font-size: 12.5px; fill: #3b6fd8; }
+    .brace { stroke: #3b6fd8; stroke-width: 1.3; fill: none; }
+  </style>
+
+  <text x="40" y="34" class="t" font-size="17">cskv.log - append-only log (all integers little-endian)</text>
+
+  <!-- file header -->
+  <text x="40" y="66" class="t">File header (8 bytes, once)</text>
+  <rect class="h" x="40"  y="78" width="160" height="44"/><text x="120" y="98" text-anchor="middle" class="n">magic</text><text x="120" y="114" text-anchor="middle" class="s">"CSKV" (4)</text>
+  <rect class="h" x="200" y="78" width="100" height="44"/><text x="250" y="98" text-anchor="middle" class="n">version</text><text x="250" y="114" text-anchor="middle" class="s">1 (2)</text>
+  <rect class="h" x="300" y="78" width="100" height="44"/><text x="350" y="98" text-anchor="middle" class="n">reserved</text><text x="350" y="114" text-anchor="middle" class="s">0 (2)</text>
+
+  <!-- record -->
+  <text x="40" y="160" class="t">Record (repeated until end of file)</text>
+  <rect class="h" x="40"  y="172" width="110" height="48"/><text x="95"  y="193" text-anchor="middle" class="n">body_len</text><text x="95"  y="210" text-anchor="middle" class="s">4</text>
+  <rect class="c" x="150" y="172" width="110" height="48"/><text x="205" y="193" text-anchor="middle" class="n">crc32</text><text x="205" y="210" text-anchor="middle" class="s">4</text>
+  <rect class="f" x="260" y="172" width="80"  height="48"/><text x="300" y="193" text-anchor="middle" class="n">type</text><text x="300" y="210" text-anchor="middle" class="s">1: SET, 2: DEL</text>
+  <rect class="f" x="340" y="172" width="100" height="48"/><text x="390" y="193" text-anchor="middle" class="n">klen</text><text x="390" y="210" text-anchor="middle" class="s">4</text>
+  <rect class="f" x="440" y="172" width="100" height="48"/><text x="490" y="193" text-anchor="middle" class="n">vlen</text><text x="490" y="210" text-anchor="middle" class="s">4 (0 for DEL)</text>
+  <rect class="v" x="540" y="172" width="170" height="48"/><text x="625" y="193" text-anchor="middle" class="n">key</text><text x="625" y="210" text-anchor="middle" class="s">klen bytes (1..256)</text>
+  <rect class="v" x="710" y="172" width="230" height="48"/><text x="825" y="193" text-anchor="middle" class="n">value</text><text x="825" y="210" text-anchor="middle" class="s">vlen bytes (0..1 MiB)</text>
+
+  <path class="brace" d="M40,228 L40,236 L260,236 L260,228"/>
+  <text x="150" y="252" text-anchor="middle" class="cap">header: 8 bytes</text>
+  <path class="brace" d="M260,228 L260,236 L940,236 L940,228"/>
+  <text x="600" y="252" text-anchor="middle" class="cap">body: body_len = 9 + klen + vlen bytes; crc32 is computed over exactly these bytes</text>
+
+  <text x="40" y="282" class="s">A record is rejected (replay stops, tail is truncated) on: fewer than 8 bytes left, impossible body_len, fewer than body_len bytes left,</text>
+  <text x="40" y="299" class="s">CRC mismatch, unknown type, inconsistent klen / vlen, or a DEL that carries a value. Exactly 0 bytes left is a clean end of file.</text>
+
+  <!-- snapshot -->
+  <text x="40" y="350" class="t" font-size="17">*.snap - snapshot file</text>
+  <rect class="h" x="40"  y="366" width="110" height="48"/><text x="95"  y="387" text-anchor="middle" class="n">magic</text><text x="95"  y="404" text-anchor="middle" class="s">"CSNP" (4)</text>
+  <rect class="h" x="150" y="366" width="90"  height="48"/><text x="195" y="387" text-anchor="middle" class="n">version</text><text x="195" y="404" text-anchor="middle" class="s">1 (2)</text>
+  <rect class="h" x="240" y="366" width="90"  height="48"/><text x="285" y="387" text-anchor="middle" class="n">reserved</text><text x="285" y="404" text-anchor="middle" class="s">0 (2)</text>
+  <rect class="h" x="330" y="366" width="130" height="48"/><text x="395" y="387" text-anchor="middle" class="n">entry_count</text><text x="395" y="404" text-anchor="middle" class="s">8</text>
+  <rect class="v" x="460" y="366" width="350" height="48"/><text x="635" y="387" text-anchor="middle" class="n">entries</text><text x="635" y="404" text-anchor="middle" class="s">entry_count times: klen (4) | vlen (4) | key | value</text>
+  <rect class="c" x="810" y="366" width="130" height="48"/><text x="875" y="387" text-anchor="middle" class="n">file_crc</text><text x="875" y="404" text-anchor="middle" class="s">4</text>
+
+  <path class="brace" d="M40,422 L40,430 L810,430 L810,422"/>
+  <text x="425" y="446" text-anchor="middle" class="cap">file_crc = CRC32 of every byte before it</text>
+
+  <text x="40" y="484" class="s">Save: write &lt;path&gt;.tmp, flush + _commit, close, then MoveFileExA over &lt;path&gt;, so a backup is either the old file or the complete new one.</text>
+  <text x="40" y="502" class="s">Restore: read the whole file, check magic, version, CRC and every length BEFORE building a new table; on any error the live data is untouched.</text>
+</svg>

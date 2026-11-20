@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" width="1000" height="660" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5b6574"/>
+    </marker>
+    <style>
+      .box  { fill: #f4f6f9; stroke: #5b6574; stroke-width: 1.4; }
+      .key  { fill: #e8f0fd; stroke: #3b6fd8; stroke-width: 1.6; }
+      .file { fill: #ffffff; stroke: #5b6574; stroke-width: 1.2; stroke-dasharray: 5 3; }
+      .tool { fill: #fdf1ec; stroke: #c4573a; stroke-width: 1.4; }
+      .t    { font-size: 15px; font-weight: 600; fill: #1d2330; }
+      .s    { font-size: 12.5px; fill: #4a5363; }
+      .lab  { font-size: 12.5px; fill: #3b6fd8; font-style: italic; }
+      .line { stroke: #5b6574; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #c4573a; stroke-width: 1.4; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <text x="500" y="22" text-anchor="middle" class="t" font-size="17">CrashSafeKV architecture</text>
+
+  <!-- clients -->
+  <rect class="box" x="100" y="40" width="320" height="58" rx="6"/>
+  <text x="260" y="64" text-anchor="middle" class="t">GUI  (gui/app.py)</text>
+  <text x="260" y="84" text-anchor="middle" class="s">Python + Tkinter, engine_client.py</text>
+  <rect class="box" x="480" y="40" width="320" height="58" rx="6"/>
+  <text x="640" y="64" text-anchor="middle" class="t">Integration tests</text>
+  <text x="640" y="84" text-anchor="middle" class="s">pytest, tests/integration</text>
+
+  <path class="line" d="M260,98 L260,146"/>
+  <path class="line" d="M640,98 L640,146"/>
+  <text x="450" y="118" text-anchor="middle" class="lab">JSON lines over</text>
+  <text x="450" y="134" text-anchor="middle" class="lab">stdin / stdout pipes</text>
+
+  <!-- CLI -->
+  <rect class="box" x="100" y="148" width="700" height="56" rx="6"/>
+  <text x="450" y="172" text-anchor="middle" class="t">cskv.exe  (cli/main.c, commands.c, output.c)</text>
+  <text x="450" y="192" text-anchor="middle" class="s">REPL, human mode and --json mode, input validation, exit codes</text>
+
+  <path class="line" d="M450,204 L450,244"/>
+  <text x="462" y="229" class="lab">cskv.h public API</text>
+
+  <!-- facade -->
+  <rect class="key" x="100" y="246" width="700" height="52" rx="6"/>
+  <text x="450" y="268" text-anchor="middle" class="t">kv.c  engine facade</text>
+  <text x="450" y="287" text-anchor="middle" class="s">open, set, get, del, keys, stats, compact, snapshot, restore; owns the lock and the log handle</text>
+
+  <path class="line" d="M180,298 L180,330"/>
+  <path class="line" d="M360,298 L360,330"/>
+  <path class="line" d="M540,298 L540,330"/>
+  <path class="line" d="M720,298 L720,330"/>
+
+  <!-- modules -->
+  <rect class="box" x="100" y="332" width="160" height="70" rx="6"/>
+  <text x="180" y="356" text-anchor="middle" class="t">hashtable.c</text>
+  <text x="180" y="375" text-anchor="middle" class="s">in-memory index</text>
+  <text x="180" y="392" text-anchor="middle" class="s">FNV-1a, chaining</text>
+
+  <rect class="box" x="280" y="332" width="160" height="70" rx="6"/>
+  <text x="360" y="356" text-anchor="middle" class="t">log.c + recovery.c</text>
+  <text x="360" y="375" text-anchor="middle" class="s">append, flush, commit</text>
+  <text x="360" y="392" text-anchor="middle" class="s">replay, truncate tail</text>
+
+  <rect class="box" x="460" y="332" width="160" height="70" rx="6"/>
+  <text x="540" y="356" text-anchor="middle" class="t">compact.c</text>
+  <text x="540" y="375" text-anchor="middle" class="s">rewrite live keys</text>
+  <text x="540" y="392" text-anchor="middle" class="s">into cskv.log.tmp</text>
+
+  <rect class="box" x="640" y="332" width="160" height="70" rx="6"/>
+  <text x="720" y="356" text-anchor="middle" class="t">snapshot.c</text>
+  <text x="720" y="375" text-anchor="middle" class="s">checksummed backup</text>
+  <text x="720" y="392" text-anchor="middle" class="s">validated restore</text>
+
+  <path class="line" d="M360,402 L360,428"/>
+  <path class="line" d="M540,402 L540,428"/>
+  <path class="line" d="M720,402 L720,428"/>
+
+  <rect class="box" x="100" y="430" width="700" height="46" rx="6"/>
+  <text x="450" y="451" text-anchor="middle" class="t">record.c + crc32.c</text>
+  <text x="450" y="468" text-anchor="middle" class="s">little-endian binary record format, 7 validation rules, CRC32 (IEEE, table-driven)</text>
+
+  <path class="line" d="M450,476 L450,498"/>
+
+  <rect class="box" x="100" y="500" width="700" height="46" rx="6"/>
+  <text x="450" y="521" text-anchor="middle" class="t">platform.c  (the only Windows-specific code)</text>
+  <text x="450" y="538" text-anchor="middle" class="s">_commit, _chsize_s, MoveFileExA, CreateFileA lock, CreateDirectoryA, QueryPerformanceCounter</text>
+
+  <path class="line" d="M180,546 L180,578"/>
+  <path class="line" d="M360,546 L360,578"/>
+  <path class="line" d="M540,546 L540,578"/>
+  <path class="line" d="M720,546 L720,578"/>
+
+  <!-- files -->
+  <rect class="file" x="100" y="580" width="160" height="58" rx="4"/>
+  <text x="180" y="604" text-anchor="middle" class="t">data/cskv.log</text>
+  <text x="180" y="623" text-anchor="middle" class="s">append-only log</text>
+  <rect class="file" x="280" y="580" width="160" height="58" rx="4"/>
+  <text x="360" y="604" text-anchor="middle" class="t">data/cskv.lock</text>
+  <text x="360" y="623" text-anchor="middle" class="s">held while open</text>
+  <rect class="file" x="460" y="580" width="160" height="58" rx="4"/>
+  <text x="540" y="604" text-anchor="middle" class="t">cskv.log.tmp</text>
+  <text x="540" y="623" text-anchor="middle" class="s">compact / restore only</text>
+  <rect class="file" x="640" y="580" width="160" height="58" rx="4"/>
+  <text x="720" y="604" text-anchor="middle" class="t">backup.snap</text>
+  <text x="720" y="623" text-anchor="middle" class="s">snapshot files</text>
+
+  <!-- corruption tool -->
+  <rect class="tool" x="830" y="430" width="150" height="80" rx="6"/>
+  <text x="905" y="456" text-anchor="middle" class="t">cskv_corrupt.exe</text>
+  <text x="905" y="476" text-anchor="middle" class="s">truncate / flip /</text>
+  <text x="905" y="493" text-anchor="middle" class="s">garbage (tests, demo)</text>
+  <path class="dash" d="M905,510 L905,660 M905,655 L180,655 L180,640"/>
+</svg>

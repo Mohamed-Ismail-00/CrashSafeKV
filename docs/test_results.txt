@@ -1,0 +1,231 @@
+CrashSafeKV - test results
+Generated: 2026-11-20 18:08
+OS:        Microsoft Windows 11 Pro (build 22631)
+Compiler:  gcc.exe (Rev7, Built by MSYS2 project) 16.2.0
+Python:    Python 3.11.0
+pytest:    pytest 9.2.0
+
+Commands:  make clean && make && make test && make leakcheck
+
+==================== make clean && make (zero warnings with -Werror) ====================
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/compact.c -o build/obj/src/compact.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/crc32.c -o build/obj/src/crc32.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/errors.c -o build/obj/src/errors.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/hashtable.c -o build/obj/src/hashtable.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/kv.c -o build/obj/src/kv.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/log.c -o build/obj/src/log.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/platform.c -o build/obj/src/platform.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/record.c -o build/obj/src/record.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/recovery.c -o build/obj/src/recovery.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c src/snapshot.c -o build/obj/src/snapshot.o
+ar rcs build/libcskv.a build/obj/src/compact.o build/obj/src/crc32.o build/obj/src/errors.o build/obj/src/hashtable.o build/obj/src/kv.o build/obj/src/log.o build/obj/src/platform.o build/obj/src/record.o build/obj/src/recovery.o build/obj/src/snapshot.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c cli/commands.c -o build/obj/cli/commands.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c cli/main.c -o build/obj/cli/main.o
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c cli/output.c -o build/obj/cli/output.o
+gcc build/obj/cli/commands.o build/obj/cli/main.o build/obj/cli/output.o build/libcskv.a -o build/cskv.exe
+gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -O2 -g -Iinclude -MMD -MP -Itests/unity -c tools/cskv_corrupt.c -o build/obj/tools/cskv_corrupt.o
+gcc build/obj/tools/cskv_corrupt.o build/libcskv.a -o build/cskv_corrupt.exe
+build exit code: 0
+
+==================== Unity unit tests (build/cskv_tests.exe) ====================
+tests/test_crc32.c:44:test_known_vector:PASS
+tests/test_crc32.c:45:test_empty_input_is_zero:PASS
+tests/test_crc32.c:46:test_incremental_equals_one_shot:PASS
+tests/test_crc32.c:47:test_single_bit_change_detected:PASS
+tests/test_hashtable.c:138:test_put_get:PASS
+tests/test_hashtable.c:139:test_overwrite_replaces_value:PASS
+tests/test_hashtable.c:140:test_remove_and_remove_missing:PASS
+tests/test_hashtable.c:141:test_empty_value_is_stored:PASS
+tests/test_hashtable.c:142:test_resize_past_10000_keys:PASS
+tests/test_hashtable.c:143:test_binary_keys_with_nul:PASS
+tests/test_hashtable.c:144:test_foreach_visits_and_stops_early:PASS
+tests/test_hashtable.c:145:test_destroy_null_and_with_entries:PASS
+tests/test_record.c:166:test_set_round_trip:PASS
+tests/test_record.c:167:test_del_round_trip:PASS
+tests/test_record.c:168:test_max_size_round_trip:PASS
+tests/test_record.c:169:test_rule1_truncated_header:PASS
+tests/test_record.c:170:test_rule2_impossible_length:PASS
+tests/test_record.c:171:test_rule3_truncated_body:PASS
+tests/test_record.c:172:test_rule4_crc_mismatch:PASS
+tests/test_record.c:173:test_rule5_unknown_type:PASS
+tests/test_record.c:174:test_rule6_inconsistent_lengths:PASS
+tests/test_record.c:175:test_rule7_tombstone_with_value:PASS
+tests/test_record.c:176:test_little_endian_layout:PASS
+tests/test_recovery.c:209:test_new_store_has_header_only:PASS
+tests/test_recovery.c:210:test_clean_replay_of_1000_records:PASS
+tests/test_recovery.c:211:test_truncated_header:PASS
+tests/test_recovery.c:212:test_truncated_body:PASS
+tests/test_recovery.c:213:test_crc_flip_in_middle_record:PASS
+tests/test_recovery.c:214:test_garbage_appended:PASS
+tests/test_recovery.c:215:test_wrong_magic_is_bad_format:PASS
+tests/test_recovery.c:216:test_short_file_is_bad_format:PASS
+tests/test_recovery.c:217:test_writes_after_recovery_survive:PASS
+tests/test_recovery.c:218:test_100k_records_recover_under_2s:PASS
+tests/test_kv.c:196:test_set_get_del:PASS
+tests/test_kv.c:197:test_get_missing:PASS
+tests/test_kv.c:198:test_del_missing_writes_nothing:PASS
+tests/test_kv.c:199:test_empty_value_allowed:PASS
+tests/test_kv.c:200:test_max_sizes_and_oversize:PASS
+tests/test_kv.c:201:test_invalid_args_rejected:PASS
+tests/test_kv.c:202:test_keys_sorted:PASS
+tests/test_kv.c:203:test_stats_count_dead_records:PASS
+tests/test_kv.c:204:test_second_open_is_locked:PASS
+tests/test_kv.c:205:test_leftover_tmp_removed_on_open:PASS
+tests/test_kv.c:206:test_missing_dir_is_created:PASS
+tests/test_compact.c:107:test_data_identical_and_log_shrinks:PASS
+tests/test_compact.c:108:test_compacted_log_survives_restart_and_appends:PASS
+tests/test_compact.c:109:test_compact_empty_store:PASS
+tests/test_compact.c:110:test_crash_during_compaction_keeps_original:PASS
+tests/test_snapshot.c:132:test_save_restore_round_trip:PASS
+tests/test_snapshot.c:133:test_no_tmp_left_after_save:PASS
+tests/test_snapshot.c:134:test_corrupted_snapshot_rejected:PASS
+tests/test_snapshot.c:135:test_missing_or_tiny_snapshot:PASS
+tests/test_snapshot.c:136:test_snapshot_of_empty_store:PASS
+tests/test_fuzz.c:158:test_random_log_tails:PASS
+tests/test_fuzz.c:159:test_random_whole_files:PASS
+tests/test_fuzz.c:160:test_flip_every_byte:PASS
+tests/test_fuzz.c:161:test_random_snapshots_rejected:PASS
+
+-----------------------
+57 Tests 0 Failures 0 Ignored 
+OK
+
+==================== pytest integration tests (tests/integration) ====================
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.2.0, pluggy-1.7.0 -- python
+rootdir: <project>
+plugins: anyio-4.10.0
+collecting ... collected 60 items
+
+tests/integration/test_cli.py::test_fresh_store_reports_empty_recovery PASSED [  1%]
+tests/integration/test_cli.py::test_set_get_del_keys PASSED              [  3%]
+tests/integration/test_cli.py::test_commands_are_case_insensitive PASSED [  5%]
+tests/integration/test_cli.py::test_value_spaces_and_json_escaping PASSED [  6%]
+tests/integration/test_cli.py::test_stats_and_compact PASSED             [  8%]
+tests/integration/test_cli.py::test_snapshot_and_restore PASSED          [ 10%]
+tests/integration/test_cli.py::test_corrupted_snapshot_leaves_state_untouched PASSED [ 11%]
+tests/integration/test_cli.py::test_restart_persistence PASSED           [ 13%]
+tests/integration/test_cli.py::test_help PASSED                          [ 15%]
+tests/integration/test_cli.py::test_invalid_input_rejected[-empty command] PASSED [ 16%]
+tests/integration/test_cli.py::test_invalid_input_rejected[FOO bar-unknown command] PASSED [ 18%]
+tests/integration/test_cli.py::test_invalid_input_rejected[SET-missing key] PASSED [ 20%]
+tests/integration/test_cli.py::test_invalid_input_rejected[SET onlykey-usage: SET] PASSED [ 21%]
+tests/integration/test_cli.py::test_invalid_input_rejected[GET-missing key] PASSED [ 23%]
+tests/integration/test_cli.py::test_invalid_input_rejected[GET a b-usage: GET] PASSED [ 25%]
+tests/integration/test_cli.py::test_invalid_input_rejected[DEL-missing key] PASSED [ 26%]
+tests/integration/test_cli.py::test_invalid_input_rejected[KEYS extra-usage: KEYS] PASSED [ 28%]
+tests/integration/test_cli.py::test_invalid_input_rejected[SNAPSHOT-usage: SNAPSHOT] PASSED [ 30%]
+tests/integration/test_cli.py::test_invalid_input_rejected[RESTORE   -usage: RESTORE] PASSED [ 31%]
+tests/integration/test_cli.py::test_invalid_input_rejected[line10-key too long] PASSED [ 33%]
+tests/integration/test_cli.py::test_invalid_input_rejected[SET bad\x01key v-printable ASCII] PASSED [ 35%]
+tests/integration/test_cli.py::test_max_key_and_value_accepted PASSED    [ 36%]
+tests/integration/test_cli.py::test_very_long_line_is_rejected_and_engine_continues PASSED [ 38%]
+tests/integration/test_cli.py::test_kill_during_writes_keeps_acknowledged_data PASSED [ 40%]
+tests/integration/test_cli.py::test_tail_corruption_is_detected_and_cut[truncate-5-truncated body] PASSED [ 41%]
+tests/integration/test_cli.py::test_tail_corruption_is_detected_and_cut[garbage-40-None] PASSED [ 43%]
+tests/integration/test_cli.py::test_flipped_byte_drops_that_record_and_later_ones PASSED [ 45%]
+tests/integration/test_cli.py::test_corrupt_tool_rejects_bad_input PASSED [ 46%]
+tests/integration/test_cli.py::test_second_engine_on_same_dir_is_locked PASSED [ 48%]
+tests/integration/test_cli.py::test_bad_arguments_exit_code_1 PASSED     [ 50%]
+tests/integration/test_cli.py::test_bad_format_exit_code_2 PASSED        [ 51%]
+tests/integration/test_cli.py::test_human_mode PASSED                    [ 53%]
+tests/integration/test_edge_cases.py::test_ctrl_z_byte_does_not_end_the_session PASSED [ 55%]
+tests/integration/test_edge_cases.py::test_lf_and_crlf_line_endings_are_both_accepted PASSED [ 56%]
+tests/integration/test_edge_cases.py::test_utf8_bom_before_first_command_is_ignored PASSED [ 58%]
+tests/integration/test_edge_cases.py::test_human_mode_script_file_with_bom_and_crlf PASSED [ 60%]
+tests/integration/test_edge_cases.py::test_random_input_lines_never_crash_the_engine PASSED [ 61%]
+tests/integration/test_edge_cases.py::test_sync_none_mode_persists_after_clean_exit PASSED [ 63%]
+tests/integration/test_edge_cases.py::test_data_dir_that_is_a_file_gives_exit_code_2 PASSED [ 65%]
+tests/integration/test_edge_cases.py::test_snapshot_into_missing_folder_fails_cleanly PASSED [ 66%]
+tests/integration/test_edge_cases.py::test_restore_of_a_log_file_is_rejected PASSED [ 68%]
+tests/integration/test_edge_cases.py::test_end_of_input_closes_cleanly_and_keeps_data PASSED [ 70%]
+tests/integration/test_gui_client.py::test_bad_keys[-Enter a key] PASSED [ 71%]
+tests/integration/test_gui_client.py::test_bad_keys[has space-spaces] PASSED [ 73%]
+tests/integration/test_gui_client.py::test_bad_keys[tab\there-spaces] PASSED [ 75%]
+tests/integration/test_gui_client.py::test_bad_keys[caf\xe9-printable ASCII] PASSED [ 76%]
+tests/integration/test_gui_client.py::test_bad_keys[key4-too long] PASSED [ 78%]
+tests/integration/test_gui_client.py::test_good_keys PASSED              [ 80%]
+tests/integration/test_gui_client.py::test_bad_values[-Enter a value] PASSED [ 81%]
+tests/integration/test_gui_client.py::test_bad_values[two\nlines-line breaks] PASSED [ 83%]
+tests/integration/test_gui_client.py::test_bad_values[ leading-start with a space] PASSED [ 85%]
+tests/integration/test_gui_client.py::test_bad_values[bell\x07-control characters] PASSED [ 86%]
+tests/integration/test_gui_client.py::test_bad_values[value4-too large] PASSED [ 88%]
+tests/integration/test_gui_client.py::test_good_values PASSED            [ 90%]
+tests/integration/test_gui_client.py::test_fmt_bytes PASSED              [ 91%]
+tests/integration/test_gui_client.py::test_client_start_send_and_replies_in_order PASSED [ 93%]
+tests/integration/test_gui_client.py::test_client_stop_is_clean_and_data_persists PASSED [ 95%]
+tests/integration/test_gui_client.py::test_client_reports_unexpected_exit PASSED [ 96%]
+tests/integration/test_gui_client.py::test_client_reports_open_error_when_locked PASSED [ 98%]
+tests/integration/test_gui_client.py::test_run_corrupt_reports_failures PASSED [100%]
+
+============================= 60 passed in 3.92s ==============================
+
+==================== Leak check (make leakcheck: counting malloc/free per test) ====================
+tests/test_crc32.c:44:test_known_vector:PASS
+tests/test_crc32.c:45:test_empty_input_is_zero:PASS
+tests/test_crc32.c:46:test_incremental_equals_one_shot:PASS
+tests/test_crc32.c:47:test_single_bit_change_detected:PASS
+tests/test_hashtable.c:138:test_put_get:PASS
+tests/test_hashtable.c:139:test_overwrite_replaces_value:PASS
+tests/test_hashtable.c:140:test_remove_and_remove_missing:PASS
+tests/test_hashtable.c:141:test_empty_value_is_stored:PASS
+tests/test_hashtable.c:142:test_resize_past_10000_keys:PASS
+tests/test_hashtable.c:143:test_binary_keys_with_nul:PASS
+tests/test_hashtable.c:144:test_foreach_visits_and_stops_early:PASS
+tests/test_hashtable.c:145:test_destroy_null_and_with_entries:PASS
+tests/test_record.c:166:test_set_round_trip:PASS
+tests/test_record.c:167:test_del_round_trip:PASS
+tests/test_record.c:168:test_max_size_round_trip:PASS
+tests/test_record.c:169:test_rule1_truncated_header:PASS
+tests/test_record.c:170:test_rule2_impossible_length:PASS
+tests/test_record.c:171:test_rule3_truncated_body:PASS
+tests/test_record.c:172:test_rule4_crc_mismatch:PASS
+tests/test_record.c:173:test_rule5_unknown_type:PASS
+tests/test_record.c:174:test_rule6_inconsistent_lengths:PASS
+tests/test_record.c:175:test_rule7_tombstone_with_value:PASS
+tests/test_record.c:176:test_little_endian_layout:PASS
+tests/test_recovery.c:209:test_new_store_has_header_only:PASS
+tests/test_recovery.c:210:test_clean_replay_of_1000_records:PASS
+tests/test_recovery.c:211:test_truncated_header:PASS
+tests/test_recovery.c:212:test_truncated_body:PASS
+tests/test_recovery.c:213:test_crc_flip_in_middle_record:PASS
+tests/test_recovery.c:214:test_garbage_appended:PASS
+tests/test_recovery.c:215:test_wrong_magic_is_bad_format:PASS
+tests/test_recovery.c:216:test_short_file_is_bad_format:PASS
+tests/test_recovery.c:217:test_writes_after_recovery_survive:PASS
+tests/test_recovery.c:218:test_100k_records_recover_under_2s:PASS
+tests/test_kv.c:196:test_set_get_del:PASS
+tests/test_kv.c:197:test_get_missing:PASS
+tests/test_kv.c:198:test_del_missing_writes_nothing:PASS
+tests/test_kv.c:199:test_empty_value_allowed:PASS
+tests/test_kv.c:200:test_max_sizes_and_oversize:PASS
+tests/test_kv.c:201:test_invalid_args_rejected:PASS
+tests/test_kv.c:202:test_keys_sorted:PASS
+tests/test_kv.c:203:test_stats_count_dead_records:PASS
+tests/test_kv.c:204:test_second_open_is_locked:PASS
+tests/test_kv.c:205:test_leftover_tmp_removed_on_open:PASS
+tests/test_kv.c:206:test_missing_dir_is_created:PASS
+tests/test_compact.c:107:test_data_identical_and_log_shrinks:PASS
+tests/test_compact.c:108:test_compacted_log_survives_restart_and_appends:PASS
+tests/test_compact.c:109:test_compact_empty_store:PASS
+tests/test_compact.c:110:test_crash_during_compaction_keeps_original:PASS
+tests/test_snapshot.c:132:test_save_restore_round_trip:PASS
+tests/test_snapshot.c:133:test_no_tmp_left_after_save:PASS
+tests/test_snapshot.c:134:test_corrupted_snapshot_rejected:PASS
+tests/test_snapshot.c:135:test_missing_or_tiny_snapshot:PASS
+tests/test_snapshot.c:136:test_snapshot_of_empty_store:PASS
+tests/test_fuzz.c:158:test_random_log_tails:PASS
+tests/test_fuzz.c:159:test_random_whole_files:PASS
+tests/test_fuzz.c:160:test_flip_every_byte:PASS
+tests/test_fuzz.c:161:test_random_snapshots_rejected:PASS
+
+-----------------------
+57 Tests 0 Failures 0 Ignored 
+OK
+
+==================== Summary ====================
+Build:            exit 0, zero warnings (-std=c11 -Wall -Wextra -Wpedantic -Werror)
+Unit tests:       exit 0, 57 Tests 0 Failures 0 Ignored 
+Integration:      exit 0, 60 passed in 3.92s
+Leak check:       exit 0, 57 Tests 0 Failures 0 Ignored  - every test frees all of its allocations
+Dr. Memory:       could not run on this machine (crashes on any program, see KNOWN_ISSUES.md)
