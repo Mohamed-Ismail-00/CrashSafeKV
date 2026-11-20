@@ -1,0 +1,17 @@
+SET name Ahmed
+SET age 21
+SET city Cairo
+SET lang C
+SET team Systems Programming
+SET name Ahmed Ali
+SET age 22
+DEL lang
+KEYS
+STATS
+COMPACT
+STATS
+SNAPSHOT backup.snap
+SET extra1 one
+SET extra2 two
+KEYS
+EXIT
